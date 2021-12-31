@@ -11,31 +11,32 @@
         pkg:
           - nodejs
           - npm
-
+### part 3 ###
+- name: Create new linux user for node app
+  hosts: aws
+  tasks:
+    - name: Createe linux user
+      user: 
+        name: hossam
+        comment: Hossam Admin
+        group: admin
+###############
 - name: Deploy nodejs app
   hosts: aws
+  become: True # enable changing user
+  become_user: hossam # default is root
   tasks:
     - name: Unpack the nodejs tar file
       unarchive:
         src: nodejs-app-1.0.0.tgz
-        dest: /root/
-    # or the following  
-    # - name: Copy nodejs folder to a server
-    #   copy:
-    #     src: nodejs-app-1.0.0.tgz
-    #     dest: /root/app-1.0.0.tgz
-    # - name: Unpack the nodejs tar file
-    #   unarchive:
-    #     src: /root/app-1.0.0.tgz
-    #     dest: /root/
-    #     remote_src: yes # the src is on a remote server
+        dest: /home/hossam
     #### part 2 ####
     - name: Install dependencies
       npm:
-        path: /root/package
+        path: /home/hossam/package
     - name: Start the application
       command:
-        chdir: /root/package/app
+        chdir: /home/hossam/package/app
         cmd: node server
       # run the command in background
       async: 1000  
