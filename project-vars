@@ -1,0 +1,4 @@
+linux_name: hossam
+location: "."
+version: 1.0.0
+destination: /home/{{linux_name}}

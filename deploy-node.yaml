@@ -14,29 +14,41 @@
 ### part 3 ###
 - name: Create new linux user for node app
   hosts: aws
+  vars_files: 
+    - project-vars
   tasks:
     - name: Createe linux user
       user: 
-        name: hossam
-        comment: Hossam Admin
+        name: "{{linux_name}}"
+        comment: "{{linux_name}} Admin"
         group: admin
+      register: user_creation_result
+    - debug: msg={{user_creation_result}}
 ###############
 - name: Deploy nodejs app
   hosts: aws
   become: True # enable changing user
-  become_user: hossam # default is root
+  become_user: "{{linux_name}}" # default is root
+  vars_files: 
+    - project-vars # location of file
+  vars: 
+  #  - location: "."
+  #  - version: 1.0.0
+  #  - destination: /home/{{linux_name}}
   tasks:
     - name: Unpack the nodejs tar file
       unarchive:
-        src: nodejs-app-1.0.0.tgz
-        dest: /home/hossam
+        src: "{{location}}/nodejs-app-{{version}}.tgz"
+        dest: "{{destination}}"
+      register: unpack_tar
+    - debug: msg={{unpack_tar}}
     #### part 2 ####
     - name: Install dependencies
       npm:
-        path: /home/hossam/package
+        path: "{{destination}}/package"
     - name: Start the application
       command:
-        chdir: /home/hossam/package/app
+        chdir: "{{destination}}/package/app"
         cmd: node server
       # run the command in background
       async: 1000  
