@@ -1,0 +1,52 @@
+---
+- name: Install node and npm
+  hosts: aws
+  tasks:
+    - name: Update apt repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+        # could be written like this
+        # update_cache: yes 
+    - name: Install nodejs and npm
+      apt: 
+        pkg:
+          - nodejs
+          - npm
+
+- name: Deploy nodejs app
+  hosts: aws
+  tasks:
+    - name: Unpack the nodejs tar file
+      unarchive:
+        src: nodejs-app-1.0.0.tgz
+        dest: /root/
+    # or the following  
+    # - name: Copy nodejs folder to a server
+    #   copy:
+    #     src: nodejs-app-1.0.0.tgz
+    #     dest: /root/app-1.0.0.tgz
+    # - name: Unpack the nodejs tar file
+    #   unarchive:
+    #     src: /root/app-1.0.0.tgz
+    #     dest: /root/
+    #     remote_src: yes # the src is on a remote server
+    ### part 2 ###
+    - name: Install dependencies
+      npm:
+        path: /root/package
+    - name: Start the application
+      command:
+        chdir: /root/package/app
+        cmd: node server
+      # run the command in background
+      async: 1000  
+      poll: 0
+    - name: Ensure app is running
+      shell: ps aux | grep node # command is more secure
+      register: app_status # save result in a variable
+    - debug: msg={{app_status.stdout_lines}}
+
+
+
+
+
+    
