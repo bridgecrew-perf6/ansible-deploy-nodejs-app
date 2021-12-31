@@ -29,7 +29,7 @@
     #     src: /root/app-1.0.0.tgz
     #     dest: /root/
     #     remote_src: yes # the src is on a remote server
-    ### part 2 ###
+    #### part 2 ####
     - name: Install dependencies
       npm:
         path: /root/package
