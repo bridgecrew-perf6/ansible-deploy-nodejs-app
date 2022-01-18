@@ -1,14 +1,16 @@
 ---
 - name: Configure nginx web server
   hosts: aws
+  become: yes
   tasks:
+  # for an ubuntu server
   - name: install nginx server
     apt: 
       name: nginx
       state: latest # absent to uninstall 
-      # to install a specific version
-      # name: nginx=1.18.0-0ubuntu1
-      # state: present
+      to install a specific version
+      name: nginx=1.18.0-0ubuntu1
+      state: present
       
   - name: start nginx server
     service:
