@@ -37,13 +37,13 @@
       command:
         chdir: /root/package/app
         cmd: node server
-      # run the command in background
+      # boutn "async" and "poll" are used to run the command in background
       async: 1000  
       poll: 0
     - name: Ensure app is running
       shell: ps aux | grep node # command is more secure
       register: app_status # save result in a variable
-    - debug: msg={{app_status.stdout_lines}}
+    - debug: msg={{app_status.stdout_lines}} # only print "stdout_lines" of the object "app_status" 
 
 
 
